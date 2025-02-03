@@ -10,7 +10,7 @@
         "rws-tsc": "./exec/console.js"
     },
     "dependencies": {
-        "@rws-framework/console": "0.3.19"
+        "@rws-framework/console": "*"
     },
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^7.2.0",

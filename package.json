@@ -1,0 +1,27 @@
+{
+    "name": "@rws-framework/tsc",
+    "version": "1.0.0",
+    "private": false,
+    "description": "",
+    "author": "papablack",
+    "license": "ISC",
+    "main": "src/index.js",
+    "bin": {
+        "rws-tsc": "./exec/console.js"
+    },
+    "dependencies": {
+        "@rws-framework/console": "0.3.19"
+    },
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^7.2.0",
+        "@typescript-eslint/parser": "^7.2.0",
+        "eslint": "^8.57.0",
+        "eslint-plugin-unused-imports": "^3.1.0",
+        "source-map-support": "^0.5.21",        
+        "typescript": "^5.7.3"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/rws-framework/tsc.git"
+    }
+}

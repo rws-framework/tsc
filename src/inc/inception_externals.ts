@@ -1,6 +1,9 @@
-const path = require('path');
+import { ExternalItemFunctionData } from 'webpack';
 
-const webpackRelatedExternals = [
+type ExternalsCallback = (err?: Error, result?: string | boolean | string[] | { [index: string]: any }) => void;
+type ExternalsFunction = (data: ExternalItemFunctionData, callback: ExternalsCallback) => void;
+
+const webpackRelatedExternals: RegExp[] = [
     /^webpack$/,
     /^webpack\/.+$/,
     /^webpack-sources/,
@@ -14,8 +17,8 @@ const webpackRelatedExternals = [
     /^webpackbar/
 ];
 
-// Podstawowe moduły node które webpack może próbować pakować
-const nodeBuiltins = [
+// Node built-in modules that webpack might try to bundle
+const nodeBuiltins: string[] = [
     'path',
     'fs',
     'crypto',
@@ -28,13 +31,16 @@ const nodeBuiltins = [
     'os'
 ];
 
-const webpackInceptionExternals = ({context, request}, callback) => {
+const webpackInceptionExternals: ExternalsFunction = (
+    { context, request }: ExternalItemFunctionData,
+    callback: (error?: null | Error, result?: string) => void
+) => {
     // Debug logging
     if (process.env.DEBUG) {
         console.log(`[Webpack Inception] Processing: ${request} from ${context}`);
     }
 
-    // Sprawdź czy to webpack-related package
+    // Check if it's a webpack-related package
     if (webpackRelatedExternals.some(pattern => pattern.test(request))) {
         return callback(null, `commonjs ${request}`);
     }
@@ -44,23 +50,22 @@ const webpackInceptionExternals = ({context, request}, callback) => {
         return callback(null, `commonjs ${request}`);
     }
 
-    // Jeśli request zaczyna się od . lub .. to znaczy że to lokalny import
+    // If request starts with . or .. it's a local import
     if (request.startsWith('.') || request.startsWith('..')) {
         return callback();
     }
 
-    // Dla node_modules
+    // For node_modules
     if (request.includes('node_modules')) {
         return callback(null, `commonjs ${request}`);
     }
 
-    // Dla wszystkich innych przypadków, pozwól webpackowi je spakować
+    // For all other cases, let webpack bundle them
     callback();
 };
 
-module.exports = {
+export {
     webpackInceptionExternals,
-    // Możesz też wyeksportować patterns jakbyś chciał ich użyć gdzie indziej
     webpackRelatedExternals,
     nodeBuiltins
 };

@@ -53,7 +53,8 @@ function configureWebpack(entries, buildDir, runspaceDir, paths = {}, isDev = fa
                   loader: 'ts-loader',
                   options: {
                     transpileOnly: false,                    
-                    compilerOptions: {
+                    configFile: false,
+                    compilerOptions: {                      
                         outDir: runspaceDir,                        
                         baseUrl: path.resolve(),
                         experimentalDecorators: true,

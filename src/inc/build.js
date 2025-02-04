@@ -4,7 +4,7 @@ const chalk = require('chalk');
 const fs = require('fs');
 // const { getCachedPath } = require('./cache');
 
-async function buildCLI(entries, appRoot, runspaceDir, buildDir, cliExecDir, tsPaths = {}, isDev = false){
+async function buildCLI(entries, appRoot, runspaceDir, buildDir, cliExecDir, tsPaths = {}, isDev = false, hasRebuild = false){
     const webpackCfg = configureWebpack(entries, buildDir, runspaceDir, tsPaths, isDev);
         console.log(`${chalk.green(`[RWS Transpile CLI]`)} Running transpiler in ${chalk.blueBright(`"${runspaceDir}"`)} ...`);
 
@@ -19,6 +19,7 @@ async function buildCLI(entries, appRoot, runspaceDir, buildDir, cliExecDir, tsP
         webpackCfg.plugins.push(new webpack.DefinePlugin({
             'process.env.RWS_CLI_EXEC': JSON.stringify(cliExecDir),
             'process.env.RWS_APP_ROOT': JSON.stringify(appRoot),
+            'process.env.RWS_APP_RELOADED': JSON.stringify(hasRebuild)
         })) 
        
         try {

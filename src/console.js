@@ -14,12 +14,14 @@ let {
     rwsCliConfigDir,
     tscExecDir,
     isVerbose,    
-    params,
-    options,
-    paramsString
+    params,    
+    allowedOptions,
+    getParamString,
+    hasAllowedOption
 } = getParams();
 
 const verboseLog = console.log;
+
 
 console.log = (data) => {
     if(isVerbose){
@@ -40,18 +42,18 @@ async function transpile({
             buildDir = path.join(runspaceDir, 'build');
         }                  
 
-        const hasRebuild = params.find(item => item === '--rebuild') !== null;
+        const hasRebuild = hasAllowedOption(allowedOptions.RELOAD);
 
         const doWarmCache = true; //needsCacheWarming(rwsCliConfigDir) || hasRebuild;  
 
         if(doWarmCache){
-            await buildCLI(entries, appRoot, runspaceDir, buildDir, tscExecDir, tsPaths, isDev);    
+            await buildCLI(entries, appRoot, runspaceDir, buildDir, tscExecDir, tsPaths, isDev, hasRebuild);    
         }else{
             console.log(chalk.blue('[RWS CLI CACHE] Starting command from built CLI client.'));
         }
 
         const transpiledBinPath = path.join(buildDir, outFileName);
-        await rwsShell.runCommand(`node ${transpiledBinPath}${paramsString()}`, runspaceDir);
+        await rwsShell.runCommand(`node ${transpiledBinPath}${getParamString()}`, runspaceDir);
 
         return {
             transpiledBinPath

@@ -14,10 +14,12 @@
       "allowSyntheticDefaultImports": true,
       "sourceMap": false,      
       "declaration": true,   
+      "allowJs": true,
+      "checkJs": false,
       "outDir": "./dist"       
     },
     "include": [
-      "src"    
+      "src"      
     ],
     "exclude": []
   }

@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import webpack, { Configuration } from 'webpack';
 import { rwsPath } from '@rws-framework/console';
 import { webpackInceptionExternals } from './inception_externals';
+import fs from 'fs';
 
 const appRootPath: string = process.cwd();
 const rootPackageNodeModules: string = path.resolve(rwsPath.findRootWorkspacePath(), 'node_modules');
@@ -23,7 +24,10 @@ const WEBPACK_PLUGINS: webpack.WebpackPluginInstance[] = [
     })
 ];
 
-const modules_setup: string[] = [rootPackageNodeModules];
+const modules_setup: string[] = [
+    path.resolve(process.cwd(), 'node_modules'),
+    rootPackageNodeModules
+];
 
 export function configureWebpack(
     entries: WebpackEntries,
@@ -32,17 +36,28 @@ export function configureWebpack(
     paths: TsPaths = {},
     isDev: boolean = false
 ): Configuration {
+    // Ensure build directory exists
+    if (!fs.existsSync(buildDir)) {
+        fs.mkdirSync(buildDir, { recursive: true });
+    }
+
     const vPath: string = path.join(runspaceDir, 'build');
+        
+    const entryObject = { main: entries.main };
+
+    const clientWebpackCfg = path.resolve(rootPackageNodeModules, '@rws-framework/client/builder/rws.webpack.config.js');
+    const serverWebpackCfg = path.resolve(rootPackageNodeModules, '@rws-framework/server/rws.webpack.config.js');
+    const cliWebpackCfg = path.resolve(rootPackageNodeModules, '@rws-framework/server/cli.webpack.config.js');
 
     const cfgExport: Configuration = {
         context: runspaceDir,
-        entry: ['reflect-metadata', entries.main],
+        entry: entryObject,
         mode: isDev ? 'development' : 'production',
         target: 'node',
         devtool: isDev ? 'source-map' : false,
         output: {
             path: buildDir,
-            filename: '[name].cli.rws.js',
+            filename: 'main.cli.rws.js',
             sourceMapFilename: '[file].map',
             chunkFilename: "[name].chunk.js",
             libraryTarget: 'commonjs2',
@@ -50,8 +65,14 @@ export function configureWebpack(
         },
         resolve: {
             extensions: ['.ts', '.js'],
-            modules: modules_setup,
-            alias: {
+            modules: [
+                path.resolve(runspaceDir, 'node_modules'),
+                ...modules_setup
+            ],
+            alias: {    
+                '@rws-client-webpack': fs.existsSync(clientWebpackCfg) ? clientWebpackCfg : false,            
+                '@rws-server-webpack': fs.existsSync(serverWebpackCfg) ? serverWebpackCfg : false,
+                '@rws-server-cli-webpack': fs.existsSync(cliWebpackCfg) ? cliWebpackCfg : false,
                 '@V': vPath,
                 ...Object.keys(paths).reduce((acc: { [key: string]: string }, key: string) => ({
                     ...acc,
@@ -73,9 +94,9 @@ export function configureWebpack(
                             options: {
                                 allowTsInNodeModules: true,
                                 transpileOnly: true,
-                                configFile: false,
+                                configFile: path.resolve(runspaceDir, 'tsconfig.json'),
                                 compilerOptions: {
-                                    outDir: runspaceDir,
+                                    outDir: buildDir,
                                     baseUrl: '.',
                                     experimentalDecorators: true,
                                     emitDecoratorMetadata: true,
@@ -99,11 +120,15 @@ export function configureWebpack(
                         }
                     ],
                     include: [
+                        path.resolve(runspaceDir, 'src'),
+                        path.resolve(runspaceDir),
                         rwsPath.findPackageDir(path.resolve(runspaceDir)),
                         path.resolve(thisPackage),
+                        path.resolve(rootPackageNodeModules, '@rws-framework/server/rws.webpack.config.js'),
                         path.resolve(rootPackageNodeModules, '@rws-framework'),
                         ...Object.values(paths).flat().map(pathPattern => {
-                            return path.resolve(runspaceDir, pathPattern[0].replace('/*', ''));
+                            const pathValue = typeof pathPattern === 'string' ? pathPattern : pathPattern[0];
+                            return path.resolve(runspaceDir, pathValue.replace('/*', ''));
                         })
                     ],
                     exclude: [
@@ -127,9 +152,22 @@ export function configureWebpack(
             topLevelAwait: true,
         },
         externals: [
-            webpackInceptionExternals
+            webpackInceptionExternals,
+            {
+                '@nestjs/common': 'commonjs @nestjs/common',
+                '@nestjs/core': 'commonjs @nestjs/core',
+                '@nestjs/config': 'commonjs @nestjs/config',
+                '@anthropic-ai/sdk': 'commonjs @anthropic-ai/sdk',
+                '@zip.js/zip.js': 'commonjs @zip.js/zip.js',
+                'mongodb-client-encryption': 'commonjs mongodb-client-encryption',
+                'uuid': 'commonjs uuid',
+                'source-map-support': 'commonjs source-map-support'
+            }
         ],
     };
+
+    // console.log(cfgExport.resolve.alias);
+    // console.log(cfgExport.module.rules[0]);
 
     cfgExport.plugins?.push(
         new webpack.BannerPlugin({

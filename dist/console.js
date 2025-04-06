@@ -25,7 +25,7 @@ async function transpile({ runspaceDir, entries = { main: 'src/index.ts' }, buil
         const hasRebuild = hasAllowedOption(allowedOptions.RELOAD);
         const doWarmCache = true; //needsCacheWarming(rwsCliConfigDir) || hasRebuild;  
         if (doWarmCache) {
-            await (0, build_1.buildCLI)(entries, appRoot, runspaceDir, buildDir, tscExecDir, tsPaths, isDev, hasRebuild);
+            await (0, build_1.buildCLI)(entries, appRoot, runspaceDir, buildDir, tscExecDir, tsPaths, isDev, hasRebuild, isVerbose);
         }
         else {
             console.log(chalk_1.default.blue('[RWS CLI CACHE] Starting command from built CLI client.'));

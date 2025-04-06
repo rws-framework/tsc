@@ -57,7 +57,7 @@ export async function transpile({
         const doWarmCache = true; //needsCacheWarming(rwsCliConfigDir) || hasRebuild;  
 
         if (doWarmCache) {
-            await buildCLI(entries, appRoot, runspaceDir, buildDir, tscExecDir, tsPaths, isDev, hasRebuild);    
+            await buildCLI(entries, appRoot, runspaceDir, buildDir, tscExecDir, tsPaths, isDev, hasRebuild, isVerbose);    
         } else {
             console.log(chalk.blue('[RWS CLI CACHE] Starting command from built CLI client.'));
         }

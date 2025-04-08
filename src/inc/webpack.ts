@@ -17,10 +17,24 @@ interface TsPaths {
     [key: string]: string[];
 }
 
+const emptyModulePath = path.resolve(rootPackageNodeModules, 'empty-module.js');
+if (!fs.existsSync(emptyModulePath)) {
+    fs.writeFileSync(emptyModulePath, 'module.exports = {};');
+}
+
 const WEBPACK_PLUGINS: webpack.WebpackPluginInstance[] = [
     new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.ProvidePlugin({
         'Reflect': ['reflect-metadata', 'Reflect']
+    }),
+     // Replace problematic entities paths with empty module
+     new webpack.NormalModuleReplacementPlugin(
+        /entities[\/\\]lib[\/\\](decode_codepoint|maps[\/\\](entities|legacy|xml)\.json)/,
+        emptyModulePath
+    ),
+    // Ignore all entities modules
+    new webpack.IgnorePlugin({
+        resourceRegExp: /entities/
     })
 ];
 
@@ -45,9 +59,9 @@ export function configureWebpack(
         
     const entryObject = { main: entries.main };
 
-    const clientWebpackCfg = path.resolve(rootPackageNodeModules, '@rws-framework/client/builder/rws.webpack.config.js');
+    const clientWebpackCfg = path.resolve(rootPackageNodeModules, '@rws-framework/client/builder/webpack/rws.webpack.config.js');
     const serverWebpackCfg = path.resolve(rootPackageNodeModules, '@rws-framework/server/rws.webpack.config.js');
-    const cliWebpackCfg = path.resolve(rootPackageNodeModules, '@rws-framework/server/cli.webpack.config.js');
+    const cliWebpackCfg = path.resolve(rootPackageNodeModules, '@rws-framework/server/cli.rws.webpack.config.js');
 
     const cfgExport: Configuration = {
         context: runspaceDir,
@@ -81,7 +95,12 @@ export function configureWebpack(
             },
             fallback: {
                 "kerberos": false,
-                "mongodb-client-encryption": false
+                "mongodb-client-encryption": false,
+                "entities": false,
+                "entities/lib/decode_codepoint": false,
+                "entities/lib/maps/entities.json": false,
+                "entities/lib/maps/legacy.json": false,
+                "entities/lib/maps/xml.json": false            
             }
         },
         module: {
@@ -123,9 +142,7 @@ export function configureWebpack(
                         path.resolve(runspaceDir, 'src'),
                         path.resolve(runspaceDir),
                         rwsPath.findPackageDir(path.resolve(runspaceDir)),
-                        path.resolve(thisPackage),
-                        path.resolve(rootPackageNodeModules, '@rws-framework/server/rws.webpack.config.js'),
-                        path.resolve(rootPackageNodeModules, '@rws-framework'),
+                        path.resolve(thisPackage),                        
                         ...Object.values(paths).flat().map(pathPattern => {
                             const pathValue = typeof pathPattern === 'string' ? pathPattern : pathPattern[0];
                             return path.resolve(runspaceDir, pathValue.replace('/*', ''));
@@ -161,7 +178,14 @@ export function configureWebpack(
                 '@zip.js/zip.js': 'commonjs @zip.js/zip.js',
                 'mongodb-client-encryption': 'commonjs mongodb-client-encryption',
                 'uuid': 'commonjs uuid',
-                'source-map-support': 'commonjs source-map-support'
+                'source-map-support': 'commonjs source-map-support',
+                '@parcel/css': 'commonjs @parcel/css',
+                'lightningcss': 'commonjs lightningcss',
+                '@swc/css': 'commonjs @swc/css',
+                '@swc/core': 'commonjs @swc/core',
+                'css-minimizer-webpack-plugin': 'commonjs css-minimizer-webpack-plugin',
+                'terser-webpack-plugin': 'commonjs terser-webpack-plugin',
+                'entities': 'commonjs entities'
             }
         ],
     };

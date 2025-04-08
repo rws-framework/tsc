@@ -12,10 +12,20 @@ const fs_1 = __importDefault(require("fs"));
 const appRootPath = process.cwd();
 const rootPackageNodeModules = path_1.default.resolve(console_1.rwsPath.findRootWorkspacePath(), 'node_modules');
 const thisPackage = path_1.default.resolve(__dirname, '..');
+const emptyModulePath = path_1.default.resolve(rootPackageNodeModules, 'empty-module.js');
+if (!fs_1.default.existsSync(emptyModulePath)) {
+    fs_1.default.writeFileSync(emptyModulePath, 'module.exports = {};');
+}
 const WEBPACK_PLUGINS = [
     new webpack_1.default.optimize.ModuleConcatenationPlugin(),
     new webpack_1.default.ProvidePlugin({
         'Reflect': ['reflect-metadata', 'Reflect']
+    }),
+    // Replace problematic entities paths with empty module
+    new webpack_1.default.NormalModuleReplacementPlugin(/entities[\/\\]lib[\/\\](decode_codepoint|maps[\/\\](entities|legacy|xml)\.json)/, emptyModulePath),
+    // Ignore all entities modules
+    new webpack_1.default.IgnorePlugin({
+        resourceRegExp: /entities/
     })
 ];
 const modules_setup = [
@@ -30,9 +40,9 @@ function configureWebpack(entries, buildDir, runspaceDir, paths = {}, isDev = fa
     }
     const vPath = path_1.default.join(runspaceDir, 'build');
     const entryObject = { main: entries.main };
-    const clientWebpackCfg = path_1.default.resolve(rootPackageNodeModules, '@rws-framework/client/builder/rws.webpack.config.js');
+    const clientWebpackCfg = path_1.default.resolve(rootPackageNodeModules, '@rws-framework/client/builder/webpack/rws.webpack.config.js');
     const serverWebpackCfg = path_1.default.resolve(rootPackageNodeModules, '@rws-framework/server/rws.webpack.config.js');
-    const cliWebpackCfg = path_1.default.resolve(rootPackageNodeModules, '@rws-framework/server/cli.webpack.config.js');
+    const cliWebpackCfg = path_1.default.resolve(rootPackageNodeModules, '@rws-framework/server/cli.rws.webpack.config.js');
     const cfgExport = {
         context: runspaceDir,
         entry: entryObject,
@@ -65,7 +75,12 @@ function configureWebpack(entries, buildDir, runspaceDir, paths = {}, isDev = fa
             },
             fallback: {
                 "kerberos": false,
-                "mongodb-client-encryption": false
+                "mongodb-client-encryption": false,
+                "entities": false,
+                "entities/lib/decode_codepoint": false,
+                "entities/lib/maps/entities.json": false,
+                "entities/lib/maps/legacy.json": false,
+                "entities/lib/maps/xml.json": false
             }
         },
         module: {
@@ -108,8 +123,6 @@ function configureWebpack(entries, buildDir, runspaceDir, paths = {}, isDev = fa
                         path_1.default.resolve(runspaceDir),
                         console_1.rwsPath.findPackageDir(path_1.default.resolve(runspaceDir)),
                         path_1.default.resolve(thisPackage),
-                        path_1.default.resolve(rootPackageNodeModules, '@rws-framework/server/rws.webpack.config.js'),
-                        path_1.default.resolve(rootPackageNodeModules, '@rws-framework'),
                         ...Object.values(paths).flat().map(pathPattern => {
                             const pathValue = typeof pathPattern === 'string' ? pathPattern : pathPattern[0];
                             return path_1.default.resolve(runspaceDir, pathValue.replace('/*', ''));
@@ -145,7 +158,14 @@ function configureWebpack(entries, buildDir, runspaceDir, paths = {}, isDev = fa
                 '@zip.js/zip.js': 'commonjs @zip.js/zip.js',
                 'mongodb-client-encryption': 'commonjs mongodb-client-encryption',
                 'uuid': 'commonjs uuid',
-                'source-map-support': 'commonjs source-map-support'
+                'source-map-support': 'commonjs source-map-support',
+                '@parcel/css': 'commonjs @parcel/css',
+                'lightningcss': 'commonjs lightningcss',
+                '@swc/css': 'commonjs @swc/css',
+                '@swc/core': 'commonjs @swc/core',
+                'css-minimizer-webpack-plugin': 'commonjs css-minimizer-webpack-plugin',
+                'terser-webpack-plugin': 'commonjs terser-webpack-plugin',
+                'entities': 'commonjs entities'
             }
         ],
     };

@@ -105,7 +105,7 @@ export async function buildCLI(
     }
 
     // Check if webpack created the output file
-    const outputFile = path.join(buildDir, 'main.cli.rws.js');
+    const outputFile = path.join(buildDir, outFileName);
     if (!fs.existsSync(outputFile)) {
         console.error(chalk.red(`[ERROR] Webpack did not create output file: ${outputFile}`));
         

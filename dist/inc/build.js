@@ -84,7 +84,7 @@ async function buildCLI(entries, appRoot, runspaceDir, buildDir, outFileName, cl
         throw new Error(`Webpack build error: ${error.message}\n${error.stack}`);
     }
     // Check if webpack created the output file
-    const outputFile = path_1.default.join(buildDir, 'main.cli.rws.js');
+    const outputFile = path_1.default.join(buildDir, outFileName);
     if (!fs_1.default.existsSync(outputFile)) {
         console.error(chalk_1.default.red(`[ERROR] Webpack did not create output file: ${outputFile}`));
         // List all files in the build directory

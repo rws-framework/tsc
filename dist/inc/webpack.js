@@ -33,7 +33,7 @@ const modules_setup = [
     path_1.default.resolve(process.cwd(), 'node_modules'),
     rootPackageNodeModules
 ];
-function configureWebpack(entries, buildDir, runspaceDir, paths = {}, isDev = false) {
+function configureWebpack(entries, buildDir, outFileName, runspaceDir, paths = {}, isDev = false) {
     var _a;
     // Ensure build directory exists
     if (!fs_1.default.existsSync(buildDir)) {
@@ -56,7 +56,7 @@ function configureWebpack(entries, buildDir, runspaceDir, paths = {}, isDev = fa
         },
         output: {
             path: buildDir,
-            filename: 'main.cli.rws.js',
+            filename: outFileName,
             sourceMapFilename: '[file].map',
             chunkFilename: "[name].chunk.js",
             libraryTarget: 'commonjs2',

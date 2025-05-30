@@ -51,6 +51,7 @@ const modules_setup: string[] = [
 export function configureWebpack(
     entries: WebpackEntries,
     buildDir: string,
+    outFileName: string,
     runspaceDir: string,
     paths: TsPaths = {},
     isDev: boolean = false
@@ -80,7 +81,7 @@ export function configureWebpack(
         },
         output: {
             path: buildDir,
-            filename: 'main.cli.rws.js',
+            filename: outFileName,
             sourceMapFilename: '[file].map',
             chunkFilename: "[name].chunk.js",
             libraryTarget: 'commonjs2',

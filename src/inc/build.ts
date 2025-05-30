@@ -17,6 +17,7 @@ export async function buildCLI(
     appRoot: string,
     runspaceDir: string,
     buildDir: string,
+    outFileName: string,
     cliExecDir: string,
     tsPaths: TsPaths = {},
     isDev: boolean = false,
@@ -34,7 +35,7 @@ export async function buildCLI(
     }
 
     // Try webpack
-    const webpackCfg = configureWebpack(entries, buildDir, runspaceDir, tsPaths, isDev);
+    const webpackCfg = configureWebpack(entries, buildDir, outFileName, runspaceDir, tsPaths, isDev);
     console.log(`${chalk.green(`[RWS Transpile CLI]`)} Running webpack in ${chalk.blueBright(`"${runspaceDir}"`)} ...`);
 
     // Add environment variables

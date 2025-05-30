@@ -47,7 +47,7 @@ export async function transpile({
     runspaceDir, 
     entries = { main: 'src/index.ts' }, 
     buildDir = null, 
-    outFileName = 'main.cli.rws.js', 
+    outFileName = 'main.js', 
     tsPaths = {}, 
     isDev = false
 }: TranspileOptions): Promise<TranspileResult | void> {
@@ -60,12 +60,13 @@ export async function transpile({
         const doWarmCache = true; //needsCacheWarming(rwsCliConfigDir) || hasRebuild;  
 
         if (doWarmCache) {
-            await buildCLI(entries, appRoot, runspaceDir, buildDir, tscExecDir, tsPaths, isDev, hasRebuild, isVerbose);    
+            await buildCLI(entries, appRoot, runspaceDir, buildDir, outFileName, tscExecDir, tsPaths, isDev, hasRebuild, isVerbose);    
         } else {
             console.log(chalk.blue('[RWS CLI CACHE] Starting command from built CLI client.'));
         }
 
         const transpiledBinPath = path.join(buildDir, outFileName);
+
         await rwsShell.runCommand(`node ${transpiledBinPath}${getParamString()}`, runspaceDir);
 
         return {

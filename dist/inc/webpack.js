@@ -8,10 +8,11 @@ const path_1 = __importDefault(require("path"));
 const webpack_1 = __importDefault(require("webpack"));
 const console_1 = require("@rws-framework/console");
 const inception_externals_1 = require("./inception_externals");
+const dirname_filename_plugin_1 = require("./dirname-filename-plugin");
+const dynamic_import_plugin_1 = require("./dynamic-import-plugin");
 const fs_1 = __importDefault(require("fs"));
 const appRootPath = process.cwd();
 const rootPackageNodeModules = path_1.default.resolve(console_1.rwsPath.findRootWorkspacePath(), 'node_modules');
-const thisPackage = path_1.default.resolve(__dirname, '..');
 const emptyModulePath = path_1.default.resolve(rootPackageNodeModules, 'empty-module.js');
 if (!fs_1.default.existsSync(emptyModulePath)) {
     fs_1.default.writeFileSync(emptyModulePath, 'module.exports = {};');
@@ -49,6 +50,10 @@ function configureWebpack(entries, buildDir, runspaceDir, paths = {}, isDev = fa
         mode: isDev ? 'development' : 'production',
         target: 'node',
         devtool: isDev ? 'source-map' : false,
+        node: {
+            __dirname: false,
+            __filename: false
+        },
         output: {
             path: buildDir,
             filename: 'main.cli.rws.js',
@@ -122,7 +127,6 @@ function configureWebpack(entries, buildDir, runspaceDir, paths = {}, isDev = fa
                         path_1.default.resolve(runspaceDir, 'src'),
                         path_1.default.resolve(runspaceDir),
                         console_1.rwsPath.findPackageDir(path_1.default.resolve(runspaceDir)),
-                        path_1.default.resolve(thisPackage),
                         ...Object.values(paths).flat().map(pathPattern => {
                             const pathValue = typeof pathPattern === 'string' ? pathPattern : pathPattern[0];
                             return path_1.default.resolve(runspaceDir, pathValue.replace('/*', ''));
@@ -141,6 +145,8 @@ function configureWebpack(entries, buildDir, runspaceDir, paths = {}, isDev = fa
         },
         plugins: [
             ...WEBPACK_PLUGINS,
+            (0, dirname_filename_plugin_1.createDirnameFilenamePlugin)(buildDir, runspaceDir),
+            (0, dynamic_import_plugin_1.createDynamicImportPlugin)(buildDir, runspaceDir),
         ],
         optimization: {
             minimize: false

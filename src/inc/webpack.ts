@@ -3,11 +3,14 @@ import chalk from 'chalk';
 import webpack, { Configuration } from 'webpack';
 import { rwsPath } from '@rws-framework/console';
 import { webpackInceptionExternals } from './inception_externals';
+import { createDirnameFilenamePlugin } from './dirname-filename-plugin';
+import { createDynamicImportPlugin } from './dynamic-import-plugin';
 import fs from 'fs';
 
 const appRootPath: string = process.cwd();
 const rootPackageNodeModules: string = path.resolve(rwsPath.findRootWorkspacePath(), 'node_modules');
-const thisPackage: string = path.resolve(__dirname, '..');
+// Use a more reliable path resolution that works for transpiled files
+// This resolves to the actual package directory where this webpack config is located
 
 interface WebpackEntries {
     [key: string]: string;
@@ -37,6 +40,8 @@ const WEBPACK_PLUGINS: webpack.WebpackPluginInstance[] = [
         resourceRegExp: /entities/
     })
 ];
+
+
 
 const modules_setup: string[] = [
     path.resolve(process.cwd(), 'node_modules'),
@@ -69,6 +74,10 @@ export function configureWebpack(
         mode: isDev ? 'development' : 'production',
         target: 'node',
         devtool: isDev ? 'source-map' : false,
+        node: {
+            __dirname: false,
+            __filename: false
+        },
         output: {
             path: buildDir,
             filename: 'main.cli.rws.js',
@@ -141,8 +150,7 @@ export function configureWebpack(
                     include: [
                         path.resolve(runspaceDir, 'src'),
                         path.resolve(runspaceDir),
-                        rwsPath.findPackageDir(path.resolve(runspaceDir)),
-                        path.resolve(thisPackage),                        
+                        rwsPath.findPackageDir(path.resolve(runspaceDir)),             
                         ...Object.values(paths).flat().map(pathPattern => {
                             const pathValue = typeof pathPattern === 'string' ? pathPattern : pathPattern[0];
                             return path.resolve(runspaceDir, pathValue.replace('/*', ''));
@@ -161,6 +169,8 @@ export function configureWebpack(
         },
         plugins: [
             ...WEBPACK_PLUGINS,
+            createDirnameFilenamePlugin(buildDir, runspaceDir),
+            createDynamicImportPlugin(buildDir, runspaceDir),
         ],
         optimization: {
             minimize: false

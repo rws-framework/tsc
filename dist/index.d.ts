@@ -1,2 +1,3 @@
 import { transpile } from './console';
-export { transpile };
+import { dynamicImportTs } from './inc/dynamic-import-helper';
+export { transpile, dynamicImportTs };

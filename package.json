@@ -1,6 +1,6 @@
 {
     "name": "@rws-framework/tsc",
-    "version": "1.3.0",
+    "version": "1.3.1",
     "private": false,
     "description": "",
     "author": "papablack",
@@ -8,7 +8,7 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "bin": {
-        "rws-tsc": "./exec/console.js"
+        "rws-tsc": "./dist/console.js"
     },
     "dependencies": {
         "@rws-framework/console": "*",

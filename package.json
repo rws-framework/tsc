@@ -1,6 +1,6 @@
 {
     "name": "@rws-framework/tsc",
-    "version": "1.2.6",
+    "version": "1.2.7",
     "private": false,
     "description": "",
     "author": "papablack",
@@ -20,7 +20,8 @@
         "eslint": "^8.57.0",
         "eslint-plugin-unused-imports": "^3.1.0",
         "source-map-support": "^0.5.21",
-        "typescript": "^5.7.3"
+        "typescript": "^5.7.3",
+        "webpack": "^5.99.9"
     },
     "repository": {
         "type": "git",

@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createDirnameFilenamePlugin = createDirnameFilenamePlugin;
 const path_1 = __importDefault(require("path"));
 const webpack_1 = __importDefault(require("webpack"));
-function createDirnameFilenamePlugin(buildDir, runspaceDir) {
+function createDirnameFilenamePlugin(buildDir, runspaceDir, entry) {
     return {
         apply(compiler) {
             compiler.hooks.compilation.tap('DirnameFilenamePlugin', (compilation) => {
@@ -20,7 +20,7 @@ function createDirnameFilenamePlugin(buildDir, runspaceDir) {
                             let source = asset.source().toString();
                             // Replace __dirname and __filename with the source directory paths
                             const srcDir = path_1.default.resolve(runspaceDir, 'src');
-                            const srcFile = path_1.default.resolve(runspaceDir, 'src', 'run.ts'); // Default to run.ts for main entry
+                            const srcFile = path_1.default.resolve(runspaceDir, entry); // Default to run.ts for main entry
                             source = source.replace(/\b__dirname\b/g, JSON.stringify(srcDir));
                             source = source.replace(/\b__filename\b/g, JSON.stringify(srcFile));
                             compilation.updateAsset(filename, new webpack_1.default.sources.RawSource(source));

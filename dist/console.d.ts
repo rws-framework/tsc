@@ -11,9 +11,10 @@ interface TranspileOptions {
     };
     isDev?: boolean;
     dynamicImports?: boolean;
+    dirnameFilenameReplace?: boolean;
 }
 interface TranspileResult {
     transpiledBinPath: string;
 }
-export declare function transpile({ runspaceDir, entries, buildDir, outFileName, tsPaths, isDev, dynamicImports }: TranspileOptions): Promise<TranspileResult | void>;
+export declare function transpile({ runspaceDir, entries, buildDir, outFileName, tsPaths, isDev, dynamicImports, dirnameFilenameReplace }: TranspileOptions): Promise<TranspileResult | void>;
 export {};

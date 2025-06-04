@@ -1,7 +1,7 @@
 import path from 'path';
 import webpack from 'webpack';
 
-export function createDirnameFilenamePlugin(buildDir: string, runspaceDir: string): webpack.WebpackPluginInstance {
+export function createDirnameFilenamePlugin(buildDir: string, runspaceDir: string, entry: string): webpack.WebpackPluginInstance {
     return {
         apply(compiler: webpack.Compiler) {
             compiler.hooks.compilation.tap('DirnameFilenamePlugin', (compilation) => {
@@ -18,7 +18,7 @@ export function createDirnameFilenamePlugin(buildDir: string, runspaceDir: strin
                                 
                                 // Replace __dirname and __filename with the source directory paths
                                 const srcDir = path.resolve(runspaceDir, 'src');
-                                const srcFile = path.resolve(runspaceDir, 'src', 'run.ts'); // Default to run.ts for main entry
+                                const srcFile = path.resolve(runspaceDir, entry); // Default to run.ts for main entry
                                 
                                 source = source.replace(
                                     /\b__dirname\b/g,

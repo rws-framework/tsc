@@ -33,8 +33,8 @@ const modules_setup = [
     path_1.default.resolve(process.cwd(), 'node_modules'),
     rootPackageNodeModules
 ];
-function configureWebpack(entries, buildDir, outFileName, runspaceDir, paths = {}, isDev = false, dynamicImports = true) {
-    var _a, _b;
+function configureWebpack(entries, buildDir, outFileName, runspaceDir, paths = {}, isDev = false, dynamicImports = true, dirnameFilenameReplace = true) {
+    var _a, _b, _c;
     // Ensure build directory exists
     if (!fs_1.default.existsSync(buildDir)) {
         fs_1.default.mkdirSync(buildDir, { recursive: true });
@@ -144,8 +144,7 @@ function configureWebpack(entries, buildDir, outFileName, runspaceDir, paths = {
             ],
         },
         plugins: [
-            ...WEBPACK_PLUGINS,
-            (0, dirname_filename_plugin_1.createDirnameFilenamePlugin)(buildDir, runspaceDir),
+            ...WEBPACK_PLUGINS
         ],
         optimization: {
             minimize: false
@@ -174,12 +173,15 @@ function configureWebpack(entries, buildDir, outFileName, runspaceDir, paths = {
             }
         ],
     };
+    if (dirnameFilenameReplace) {
+        (_a = cfgExport.plugins) === null || _a === void 0 ? void 0 : _a.push((0, dirname_filename_plugin_1.createDirnameFilenamePlugin)(buildDir, runspaceDir, entryObject.main));
+    }
     if (dynamicImports) {
-        (_a = cfgExport.plugins) === null || _a === void 0 ? void 0 : _a.push((0, dynamic_import_plugin_1.createDynamicImportPlugin)(buildDir, runspaceDir));
+        (_b = cfgExport.plugins) === null || _b === void 0 ? void 0 : _b.push((0, dynamic_import_plugin_1.createDynamicImportPlugin)(buildDir, runspaceDir));
     }
     // console.log(cfgExport.resolve.alias);
     // console.log(cfgExport.module.rules[0]);
-    (_b = cfgExport.plugins) === null || _b === void 0 ? void 0 : _b.push(new webpack_1.default.BannerPlugin({
+    (_c = cfgExport.plugins) === null || _c === void 0 ? void 0 : _c.push(new webpack_1.default.BannerPlugin({
         banner: 'require("source-map-support").install();',
         raw: true
     }));

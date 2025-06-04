@@ -55,7 +55,8 @@ export function configureWebpack(
     runspaceDir: string,
     paths: TsPaths = {},
     isDev: boolean = false,
-    dynamicImports: boolean = true
+    dynamicImports: boolean = true,
+    dirnameFilenameReplace: boolean = true,
 ): Configuration {
     // Ensure build directory exists
     if (!fs.existsSync(buildDir)) {
@@ -170,8 +171,7 @@ export function configureWebpack(
             ],
         },
         plugins: [
-            ...WEBPACK_PLUGINS,
-            createDirnameFilenamePlugin(buildDir, runspaceDir),            
+            ...WEBPACK_PLUGINS
         ],
         optimization: {
             minimize: false
@@ -200,6 +200,10 @@ export function configureWebpack(
             }
         ],
     };
+
+    if(dirnameFilenameReplace){
+        cfgExport.plugins?.push(createDirnameFilenamePlugin(buildDir, runspaceDir, entryObject.main));
+    }
 
     if(dynamicImports){
         cfgExport.plugins?.push(createDynamicImportPlugin(buildDir, runspaceDir));

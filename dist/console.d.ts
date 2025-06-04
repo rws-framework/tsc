@@ -10,9 +10,10 @@ interface TranspileOptions {
         [key: string]: string[];
     };
     isDev?: boolean;
+    dynamicImports?: boolean;
 }
 interface TranspileResult {
     transpiledBinPath: string;
 }
-export declare function transpile({ runspaceDir, entries, buildDir, outFileName, tsPaths, isDev }: TranspileOptions): Promise<TranspileResult | void>;
+export declare function transpile({ runspaceDir, entries, buildDir, outFileName, tsPaths, isDev, dynamicImports }: TranspileOptions): Promise<TranspileResult | void>;
 export {};

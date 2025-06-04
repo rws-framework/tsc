@@ -82,11 +82,8 @@ git push origin "$VERSION" || {
     exit 1
 }
 
-# Publish to npm
-echo "Publishing to npm..."
-npm publish || {
-    echo "Error: Failed to publish to npm"
-    exit 1
-}
+echo "Publishing to NPM..."
+
+npm publish
 
 echo "Successfully published version $VERSION!"

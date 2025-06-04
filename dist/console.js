@@ -19,7 +19,7 @@ console.log = (data) => {
         verboseLog(data);
     }
 };
-async function transpile({ runspaceDir, entries = { main: 'src/index.ts' }, buildDir = null, outFileName = 'main.js', tsPaths = {}, isDev = false }) {
+async function transpile({ runspaceDir, entries = { main: 'src/index.ts' }, buildDir = null, outFileName = 'main.js', tsPaths = {}, isDev = false, dynamicImports = true }) {
     try {
         if (!buildDir) {
             buildDir = path_1.default.join(runspaceDir, 'build');
@@ -27,7 +27,7 @@ async function transpile({ runspaceDir, entries = { main: 'src/index.ts' }, buil
         const hasRebuild = hasAllowedOption(allowedOptions.RELOAD);
         const doWarmCache = true; //needsCacheWarming(rwsCliConfigDir) || hasRebuild;  
         if (doWarmCache) {
-            await (0, build_1.buildCLI)(entries, appRoot, runspaceDir, buildDir, outFileName, tscExecDir, tsPaths, isDev, hasRebuild, isVerbose);
+            await (0, build_1.buildCLI)(entries, appRoot, runspaceDir, buildDir, outFileName, tscExecDir, tsPaths, isDev, hasRebuild, isVerbose, dynamicImports);
         }
         else {
             console.log(chalk_1.default.blue('[RWS CLI CACHE] Starting command from built CLI client.'));

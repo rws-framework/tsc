@@ -22,7 +22,8 @@ export async function buildCLI(
     tsPaths: TsPaths = {},
     isDev: boolean = false,
     hasRebuild: boolean = false,
-    isVerbose: boolean = false
+    isVerbose: boolean = false,
+    dynamicImports: boolean = true
 ): Promise<void> {
     console.log(chalk.blue(`[DEBUG] Build directory: ${buildDir}`));
     console.log(chalk.blue(`[DEBUG] Runspace directory: ${runspaceDir}`));
@@ -35,7 +36,7 @@ export async function buildCLI(
     }
 
     // Try webpack
-    const webpackCfg = configureWebpack(entries, buildDir, outFileName, runspaceDir, tsPaths, isDev);
+    const webpackCfg = configureWebpack(entries, buildDir, outFileName, runspaceDir, tsPaths, isDev, dynamicImports);
     console.log(`${chalk.green(`[RWS Transpile CLI]`)} Running webpack in ${chalk.blueBright(`"${runspaceDir}"`)} ...`);
 
     // Add environment variables

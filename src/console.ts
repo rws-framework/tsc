@@ -18,6 +18,7 @@ interface TranspileOptions {
     outFileName?: string;
     tsPaths?: { [key: string]: string[] };
     isDev?: boolean;
+    dynamicImports?: boolean;
 }
 
 interface TranspileResult {
@@ -49,7 +50,8 @@ export async function transpile({
     buildDir = null, 
     outFileName = 'main.js', 
     tsPaths = {}, 
-    isDev = false
+    isDev = false,
+    dynamicImports = true
 }: TranspileOptions): Promise<TranspileResult | void> {
     try {        
         if (!buildDir) {
@@ -60,7 +62,7 @@ export async function transpile({
         const doWarmCache = true; //needsCacheWarming(rwsCliConfigDir) || hasRebuild;  
 
         if (doWarmCache) {
-            await buildCLI(entries, appRoot, runspaceDir, buildDir, outFileName, tscExecDir, tsPaths, isDev, hasRebuild, isVerbose);    
+            await buildCLI(entries, appRoot, runspaceDir, buildDir, outFileName, tscExecDir, tsPaths, isDev, hasRebuild, isVerbose, dynamicImports);    
         } else {
             console.log(chalk.blue('[RWS CLI CACHE] Starting command from built CLI client.'));
         }

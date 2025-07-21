@@ -9,18 +9,19 @@ const webpack_2 = require("./webpack");
 const chalk_1 = __importDefault(require("chalk"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-async function buildCLI(entries, appRoot, runspaceDir, buildDir, outFileName, cliExecDir, tsPaths = {}, isDev = false, hasRebuild = false, isVerbose = false, dynamicImports = true, dirnameFilenameReplace = true) {
+async function buildCLI(entries, appRoot, runspaceDir, buildDir, outFileName, cliExecDir, tsPaths = {}, isDev = false, extraNodeModules = [], hasRebuild = false, isVerbose = false, dynamicImports = true, dirnameFilenameReplace = true) {
     var _a, _b, _c;
     console.log(chalk_1.default.blue(`[DEBUG] Build directory: ${buildDir}`));
     console.log(chalk_1.default.blue(`[DEBUG] Runspace directory: ${runspaceDir}`));
     console.log(chalk_1.default.blue(`[DEBUG] CLI exec directory: ${cliExecDir}`));
     console.log(chalk_1.default.blue(`[DEBUG] Entry file: ${entries.main}`));
+    console.log({ extraNodeModules });
     // Ensure build directory exists
     if (!fs_1.default.existsSync(buildDir)) {
         fs_1.default.mkdirSync(buildDir, { recursive: true });
     }
     // Try webpack
-    const webpackCfg = (0, webpack_2.configureWebpack)(entries, buildDir, outFileName, runspaceDir, tsPaths, isDev, dynamicImports, dirnameFilenameReplace);
+    const webpackCfg = (0, webpack_2.configureWebpack)(entries, buildDir, outFileName, runspaceDir, tsPaths, isDev, extraNodeModules, dynamicImports, dirnameFilenameReplace);
     console.log(`${chalk_1.default.green(`[RWS Transpile CLI]`)} Running webpack in ${chalk_1.default.blueBright(`"${runspaceDir}"`)} ...`);
     // Add environment variables
     (_a = webpackCfg.plugins) === null || _a === void 0 ? void 0 : _a.push(new webpack_1.default.DefinePlugin({

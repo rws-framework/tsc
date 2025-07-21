@@ -18,9 +18,10 @@ export async function buildCLI(
     runspaceDir: string,
     buildDir: string,
     outFileName: string,
-    cliExecDir: string,
+    cliExecDir: string,    
     tsPaths: TsPaths = {},
     isDev: boolean = false,
+    extraNodeModules: string[] = [],
     hasRebuild: boolean = false,
     isVerbose: boolean = false,
     dynamicImports: boolean = true,
@@ -30,6 +31,8 @@ export async function buildCLI(
     console.log(chalk.blue(`[DEBUG] Runspace directory: ${runspaceDir}`));
     console.log(chalk.blue(`[DEBUG] CLI exec directory: ${cliExecDir}`));
     console.log(chalk.blue(`[DEBUG] Entry file: ${entries.main}`));
+
+    console.log({ extraNodeModules })
     
     // Ensure build directory exists
     if (!fs.existsSync(buildDir)) {
@@ -37,7 +40,7 @@ export async function buildCLI(
     }
 
     // Try webpack
-    const webpackCfg = configureWebpack(entries, buildDir, outFileName, runspaceDir, tsPaths, isDev, dynamicImports, dirnameFilenameReplace);
+    const webpackCfg = configureWebpack(entries, buildDir, outFileName, runspaceDir, tsPaths, isDev, extraNodeModules, dynamicImports, dirnameFilenameReplace);
     console.log(`${chalk.green(`[RWS Transpile CLI]`)} Running webpack in ${chalk.blueBright(`"${runspaceDir}"`)} ...`);
 
     // Add environment variables

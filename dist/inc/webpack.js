@@ -29,16 +29,16 @@ const WEBPACK_PLUGINS = [
         resourceRegExp: /entities/
     })
 ];
-const modules_setup = [
-    path_1.default.resolve(process.cwd(), 'node_modules'),
-    rootPackageNodeModules
-];
-function configureWebpack(entries, buildDir, outFileName, runspaceDir, paths = {}, isDev = false, dynamicImports = true, dirnameFilenameReplace = true) {
+function configureWebpack(entries, buildDir, outFileName, runspaceDir, paths = {}, isDev = false, extraNodeModules = [], dynamicImports = true, dirnameFilenameReplace = true) {
     var _a, _b, _c;
     // Ensure build directory exists
     if (!fs_1.default.existsSync(buildDir)) {
         fs_1.default.mkdirSync(buildDir, { recursive: true });
     }
+    const modules_setup = [
+        rootPackageNodeModules,
+        ...extraNodeModules,
+    ];
     const vPath = path_1.default.join(runspaceDir, 'build');
     const entryObject = { main: entries.main };
     const clientWebpackCfg = path_1.default.resolve(rootPackageNodeModules, '@rws-framework/client/builder/webpack/rws.webpack.config.js');

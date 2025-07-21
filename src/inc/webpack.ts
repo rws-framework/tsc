@@ -41,13 +41,6 @@ const WEBPACK_PLUGINS: webpack.WebpackPluginInstance[] = [
     })
 ];
 
-
-
-const modules_setup: string[] = [
-    path.resolve(process.cwd(), 'node_modules'),
-    rootPackageNodeModules
-];
-
 export function configureWebpack(
     entries: WebpackEntries,
     buildDir: string,
@@ -55,6 +48,7 @@ export function configureWebpack(
     runspaceDir: string,
     paths: TsPaths = {},
     isDev: boolean = false,
+    extraNodeModules: string[] = [],
     dynamicImports: boolean = true,
     dirnameFilenameReplace: boolean = true,
 ): Configuration {
@@ -62,6 +56,11 @@ export function configureWebpack(
     if (!fs.existsSync(buildDir)) {
         fs.mkdirSync(buildDir, { recursive: true });
     }
+
+    const modules_setup: string[] = [
+        rootPackageNodeModules,
+        ...extraNodeModules,
+    ];
 
     const vPath: string = path.join(runspaceDir, 'build');
         

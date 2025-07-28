@@ -13,6 +13,12 @@ const build_1 = require("./inc/build");
 // Detect if this is being called as a CLI
 const isCliCall = require.main === module;
 const { appRoot, rwsCliConfigDir, tscExecDir, isVerbose, params, allowedOptions, getParamString, hasAllowedOption } = (0, params_1.getParams)();
+// Debug output for parameter parsing
+if (isVerbose) {
+    console.log('[RWS TSC Debug] process.argv:', process.argv);
+    console.log('[RWS TSC Debug] parsed params:', params);
+    console.log('[RWS TSC Debug] getParamString():', getParamString());
+}
 const verboseLog = console.log;
 console.log = (data) => {
     if (isVerbose) {
@@ -33,7 +39,11 @@ async function transpile({ runspaceDir, entries = { main: 'src/index.ts' }, buil
             console.log(chalk_1.default.blue('[RWS CLI CACHE] Starting command from built CLI client.'));
         }
         const transpiledBinPath = path_1.default.join(buildDir, outFileName);
-        await console_1.rwsShell.runCommand(`node ${transpiledBinPath}${getParamString()}`, runspaceDir);
+        const commandString = `node ${transpiledBinPath}${getParamString()}`;
+        if (isVerbose) {
+            console.log('[RWS TSC Debug] Executing command:', commandString);
+        }
+        await console_1.rwsShell.runCommand(commandString, runspaceDir);
         return {
             transpiledBinPath
         };

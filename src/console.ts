@@ -38,6 +38,13 @@ const {
     hasAllowedOption
 } = getParams();
 
+// Debug output for parameter parsing
+if (isVerbose) {
+    console.log('[RWS TSC Debug] process.argv:', process.argv);
+    console.log('[RWS TSC Debug] parsed params:', params);
+    console.log('[RWS TSC Debug] getParamString():', getParamString());
+}
+
 const verboseLog = console.log;
 
 console.log = (data: any) => {
@@ -74,8 +81,13 @@ export async function transpile({
         }
 
         const transpiledBinPath = path.join(buildDir, outFileName);
+        const commandString = `node ${transpiledBinPath}${getParamString()}`;
+        
+        if (isVerbose) {
+            console.log('[RWS TSC Debug] Executing command:', commandString);
+        }
 
-        await rwsShell.runCommand(`node ${transpiledBinPath}${getParamString()}`, runspaceDir);
+        await rwsShell.runCommand(commandString, runspaceDir);
 
         return {
             transpiledBinPath

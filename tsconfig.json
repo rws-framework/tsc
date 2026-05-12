@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+      "ignoreDeprecations": "6.0",
       "baseUrl": ".",
       "experimentalDecorators": true,
       "emitDecoratorMetadata": true,
@@ -18,6 +19,7 @@
       "allowJs": true,
       "checkJs": false,
       "outDir": "./dist",
+      "rootDir": "./src",
       "types": ["node"]
     },
     "include": [

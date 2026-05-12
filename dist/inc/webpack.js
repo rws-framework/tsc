@@ -152,6 +152,13 @@ function configureWebpack(entries, buildDir, outFileName, runspaceDir, paths = {
         experiments: {
             topLevelAwait: true,
         },
+        resolveLoader: {
+            modules: [
+                rootPackageNodeModules,
+                path_1.default.resolve(runspaceDir, 'node_modules'),
+                'node_modules'
+            ]
+        },
         externals: [
             inception_externals_1.webpackInceptionExternals,
             {

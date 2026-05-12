@@ -178,6 +178,13 @@ export function configureWebpack(
         experiments: {
             topLevelAwait: true,
         },
+        resolveLoader: {
+            modules: [
+                rootPackageNodeModules,
+                path.resolve(runspaceDir, 'node_modules'),
+                'node_modules'
+            ]
+        },
         externals: [
             webpackInceptionExternals,
             {

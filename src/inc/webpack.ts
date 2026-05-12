@@ -126,7 +126,9 @@ export function configureWebpack(
                                 transpileOnly: true,
                                 configFile: path.resolve(runspaceDir, 'tsconfig.json'),
                                 compilerOptions: {
+                                    ignoreDeprecations: '6.0',
                                     outDir: buildDir,
+                                    rootDir: rwsPath.findRootWorkspacePath(),
                                     baseUrl: '.',
                                     experimentalDecorators: true,
                                     emitDecoratorMetadata: true,

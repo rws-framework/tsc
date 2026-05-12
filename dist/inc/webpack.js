@@ -100,7 +100,9 @@ function configureWebpack(entries, buildDir, outFileName, runspaceDir, paths = {
                                 transpileOnly: true,
                                 configFile: path_1.default.resolve(runspaceDir, 'tsconfig.json'),
                                 compilerOptions: {
+                                    ignoreDeprecations: '6.0',
                                     outDir: buildDir,
+                                    rootDir: console_1.rwsPath.findRootWorkspacePath(),
                                     baseUrl: '.',
                                     experimentalDecorators: true,
                                     emitDecoratorMetadata: true,

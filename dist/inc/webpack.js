@@ -99,8 +99,15 @@ function configureWebpack(entries, buildDir, outFileName, runspaceDir, paths = {
                                 allowTsInNodeModules: true,
                                 transpileOnly: true,
                                 configFile: path_1.default.resolve(runspaceDir, 'tsconfig.json'),
+                                errorFormatter: (error, colors) => {
+                                    const file = error.file ? path_1.default.relative(runspaceDir, error.file) : (error.context || '<unknown>');
+                                    const code = error.code ? `TS${error.code}` : '';
+                                    const line = error.line ? `:${error.line}` : '';
+                                    const char = error.character ? `:${error.character}` : '';
+                                    const msg = error.content || error.rawMessage || error.message || '';
+                                    return `\n[tsl] ${(error.severity || 'error').toUpperCase()} in ${file}${line}${char}\n      ${code}: ${msg}\n`;
+                                },
                                 compilerOptions: {
-                                    ignoreDeprecations: '6.0',
                                     outDir: buildDir,
                                     rootDir: console_1.rwsPath.findRootWorkspacePath(),
                                     baseUrl: '.',
